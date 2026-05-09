@@ -29,7 +29,7 @@ jobs:
         npx webpack
 
     - name: Upload webpack bundle artifact
-      if: github.event_name == 'push' && matrix.node-version == '22.x'
+      if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')) && matrix.node-version == '22.x'
       uses: actions/upload-artifact@v4
       with:
         name: simple-weather-card-bundle
@@ -52,5 +52,5 @@ jobs:
     - name: Create GitHub release with bundle
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || format('build-{0}-{1}', github.run_id, github.sha) }}
+        tag_name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || format('build-{0}-{1}', github.run_number, github.run_attempt) }}
         files: simple-weather-card-bundle.js
